@@ -1,26 +1,110 @@
 @import "tailwindcss";
 
+/* ============================================
+   HEALTHBRIDGE AI - PREMIUM DESIGN SYSTEM
+   ============================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* === CORE BRAND COLORS === */
+  --primary: #0284C7;           /* Sky 600 - Trust Blue */
+  --primary-dark: #0369A1;      /* Sky 700 */
+  --primary-light: #E0F2FE;     /* Sky 100 */
+  
+  --secondary: #0D9488;         /* Teal 600 - Healing Green */
+  --secondary-dark: #0F766E;    /* Teal 700 */
+  --secondary-light: #CCFBF1;   /* Teal 100 */
+  
+  --accent: #F43F5E;            /* Rose 500 - Urgent */
+  
+  /* === NEUTRALS (Slate Scale) === */
+  --gray-50: #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1E293B;
+  --gray-900: #0F172A;
+  
+  /* === SURFACE & BACKGROUNDS === */
+  --background: #F8FAFC;        /* Light Slate Background */
+  --surface: #FFFFFF;           /* Pure White Cards */
+  --surface-glass: rgba(255, 255, 255, 0.7);
+  
+  /* === FOREGROUND TEXT === */
+  --foreground: #0F172A;        /* Slate 900 */
+  --text-secondary: #475569;    /* Slate 600 */
+  --text-light: #94A3B8;        /* Slate 400 */
+
+  /* === BORDERS === */
+  --border-color: #E2E8F0;      /* Slate 200 */
+  
+  /* === UI TOKENS === */
+  --radius-sm: 0.5rem;          /* 8px */
+  --radius-md: 0.75rem;         /* 12px */
+  --radius-lg: 1rem;            /* 16px */
+  --radius-xl: 1.5rem;          /* 24px */
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 20px rgba(2, 132, 199, 0.15); /* Primary Glow */
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* === RESET & BASE === */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
+
+/* === GLASSMORPHISM UTILITIES === */
+.glass {
+  background: var(--surface-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+/* === ANIMATIONS === */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* === SCROLLBAR === */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}
+

@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HealthBridge AI 🏥
 
-## Getting Started
+**Winner of HackFusion 2026 - Innovation in Rural Healthcare**
 
-First, run the development server:
+HealthBridge AI is a hybrid "phygital" platform designed to bridge the healthcare gap in underserved communities. It combines an AI-powered telemedicine app with physical smart kiosks to ensure no village is left behind.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+![HealthBridge Banner](public/banner.png)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 1. 🤖 AI Symptom Checker
+- **Multilingual Support**: Takes input in regional languages (simulated via text/voice).
+- **Intelligent Triage**: Classifies cases as Low (Home Care), Medium (Consult), or High (Urgent).
+- **Instant Insights**: Provides preliminary diagnosis to doctors before the call starts.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 2. 👨‍⚕️ Doctor Dashboard (AI-Driven)
+- **Priority Queue**: Patients are sorted by AI-assigned severity (Critical cases first).
+- **Smart Insights**: Shows summarized symptoms and vitals.
+- **Telemedicine Integrated**: One-click video consultations.
 
-## Learn More
+### 3. 🏪 Community Smart Kiosk
+- **IoT Simulation**: Interactive wizard for measuring Blood Pressure, Pulse, and Temperature.
+- **Touch-First UI**: Designed for elderly and low-literacy users.
+- **Offline Capable**: (Demo) Works with low connectivity.
 
-To learn more about Next.js, take a look at the following resources:
+### 4. 🔗 Blockchain Health Records
+- **Portable**: Patient owns their data.
+- **Secure**: Tamper-proof medical history (simulated for prototype).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS (v4) + Custom Design System
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Charts**: Recharts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🏃‍♂️ How to Run
 
-## Deploy on Vercel
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+2. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. **Open in Browser**
+   - **Landing Page**: [http://localhost:3000](http://localhost:3000)
+   - **Patient Portal**: [http://localhost:3000/patient](http://localhost:3000/patient)
+   - **Doctor Dashboard**: [http://localhost:3000/doctor](http://localhost:3000/doctor)
+   - **Kiosk Interface**: [http://localhost:3000/kiosk](http://localhost:3000/kiosk)
+
+## 📱 Demo Flow for Judges
+
+1. **Start at Landing Page**: Show the problem stats and solution overview.
+2. **Patient Persona**: 
+   - Go to `Patient Portal` -> `Symptom Checker`.
+   - Enter "Chest pain and sweating".
+   - See AI flag it as "High Severity".
+3. **Doctor Persona**:
+   - Go to `Doctor Dashboard`.
+   - Show how the "Chest pain" patient appears at the TOP of the queue.
+4. **Kiosk Persona**:
+   - Go to `Kiosk Mode`.
+   - Run the `Check Vitals` wizard to show the IoT simulation.
+
+## 👥 Team
+- **Architect**: [Your Name]
+- **Frontend**: HealthBridge AI Agent
+- **ML/AI**: [Team Member]
+
+---
+*Built within 24 hours for HackFusion 2026*

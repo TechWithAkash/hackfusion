@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Mic, Send, AlertCircle, CheckCircle, ArrowRight, RefreshCcw, Stethoscope, Activity, FileText, Brain, Sparkles, ChevronRight } from 'lucide-react';
+import { Mic, Send, AlertCircle, CheckCircle, ArrowRight, RefreshCcw, Stethoscope, Activity, FileText, Brain, Sparkles, ChevronRight, Zap, MicOff } from 'lucide-react';
 import { Button, Card, CardContent, Input, TextArea, Badge, SeverityBadge, Spinner } from '@/components/ui';
 import Link from 'next/link';
 
@@ -69,236 +69,259 @@ export default function SymptomChecker() {
   const result = getResult();
 
   return (
-    <div className="max-w-4xl mx-auto space-y-10 py-8 font-sans">
-      {/* Header Section */}
-      <div className="text-center relative">
-         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-teal-500/20 rounded-full blur-3xl -z-10"></div>
-         <Badge className="bg-teal-50 text-teal-600 border-teal-200 mb-4 hover:bg-teal-100 transition-colors cursor-default">
-            <Sparkles size={12} className="mr-1" /> AI Powered Diagnosis
-         </Badge>
-         <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4 tracking-tight">How are you feeling today?</h1>
-         <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
-            Describe your symptoms in your local language. Our AI will analyze them instantly and guide you to the right care.
-         </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-purple-50/20 py-12">
+      {/* Fixed Background */}
+      <div className="fixed inset-0 -z-10 bg-grid-pattern opacity-20"></div>
+      
+      <div className="max-w-4xl mx-auto px-6">
+        {/* Header Section - Minimal */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-[var(--border-default)] shadow-sm mb-6">
+            <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+            <span className="text-sm font-semibold text-[var(--text-secondary)]">AI Powered Diagnosis</span>
+          </div>
+          
+          <h1 className="text-4xl md:text-5xl font-bold text-[var(--text-primary)] mb-4 tracking-tight">
+            How are you feeling today?
+          </h1>
+          <p className="text-lg text-[var(--text-secondary)] max-w-2xl mx-auto">
+            Describe your symptoms in your language. Our AI will analyze them instantly.
+          </p>
+        </div>
 
-      <AnimatePresence mode="wait">
-        {step === 'input' && (
-          <motion.div
-            key="input"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ duration: 0.4 }}
-          >
-            <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden relative">
-               {/* Decorative Gradient Line */}
-               <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-500 via-blue-500 to-indigo-500"></div>
-
-               <div className="p-8 md:p-12 space-y-8">
+        <AnimatePresence mode="wait">
+          {step === 'input' && (
+            <motion.div
+              key="input"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="bg-white rounded-3xl shadow-lg border border-[var(--border-default)] overflow-hidden">
+                {/* Gradient Top Border */}
+                <div className="h-1 bg-gradient-to-r from-purple-500 via-blue-500 to-teal-500"></div>
+                
+                <div className="p-8 md:p-10 space-y-8">
+                  {/* Input Section */}
                   <div>
-                     <label className="block text-lg font-bold text-slate-800 mb-4">
-                        Describe your symptoms
-                     </label>
-                     <div className="relative group">
-                        <textarea
-                           placeholder="e.g., I have a headache, high fever, and body pain since last night..."
-                           value={symptoms}
-                           onChange={(e) => setSymptoms(e.target.value)}
-                           rows={6}
-                           className="w-full bg-slate-50 rounded-3xl p-6 text-lg text-slate-900 placeholder:text-slate-400 border-2 border-transparent focus:border-blue-500/20 focus:bg-white focus:shadow-lg transition-all resize-none outline-none"
-                        />
-                        <button
-                           onClick={toggleRecording}
-                           className={`
-                              absolute right-4 bottom-4 p-4 rounded-2xl transition-all shadow-md
-                              ${isRecording 
-                                 ? 'bg-rose-500 text-white animate-pulse shadow-rose-500/30' 
-                                 : 'bg-white text-slate-600 hover:text-blue-600 hover:shadow-lg border border-slate-100'
-                              }
-                           `}
-                        >
-                           <Mic size={24} />
-                        </button>
-                     </div>
-                     {isRecording && (
-                        <p className="text-sm text-rose-500 mt-3 animate-pulse font-bold flex items-center gap-2">
-                           <span className="w-2 h-2 rounded-full bg-rose-500"></span> Listening...
-                        </p>
-                     )}
-                  </div>
-
-                  <div>
-                     <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Quick Select</p>
-                     <div className="flex flex-wrap gap-3">
-                        {['Fever and cough', 'Stomach pain', 'Dizziness', 'Skin rash', 'Migraine', 'Joint Pain'].map((tag) => (
-                           <button
-                              key={tag}
-                              onClick={() => setSymptoms(tag)}
-                              className="px-5 py-2.5 bg-white border border-slate-200 rounded-full text-slate-600 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all font-medium text-sm"
-                           >
-                              {tag}
-                           </button>
-                        ))}
-                     </div>
-                  </div>
-
-                  <div className="pt-4 flex justify-end">
-                     <Button 
-                        onClick={handleAnalyze} 
-                        className={`h-16 px-10 rounded-2xl text-lg font-bold transition-all ${
-                           !symptoms.trim() 
-                              ? 'bg-slate-100 text-slate-400 cursor-not-allowed' 
-                              : 'bg-slate-900 text-white hover:bg-slate-800 hover:scale-[1.02] shadow-xl shadow-slate-900/20'
+                    <label className="block text-base font-bold text-[var(--text-primary)] mb-4">
+                      Describe your symptoms
+                    </label>
+                    <div className="relative">
+                      <textarea
+                        placeholder="e.g., I have a headache, high fever, and body pain since last night..."
+                        value={symptoms}
+                        onChange={(e) => setSymptoms(e.target.value)}
+                        rows={6}
+                        className="w-full bg-[var(--gray-50)] rounded-2xl p-6 text-base text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] border-2 border-transparent focus:border-[var(--primary)]/30 focus:bg-white focus:shadow-lg transition-all resize-none outline-none"
+                      />
+                      
+                      {/* Voice Button */}
+                      <button
+                        onClick={toggleRecording}
+                        className={`absolute right-4 bottom-4 p-3.5 rounded-xl transition-all shadow-md ${
+                          isRecording 
+                            ? 'bg-red-500 text-white animate-pulse' 
+                            : 'bg-white text-[var(--text-secondary)] hover:text-[var(--primary)] hover:bg-[var(--primary-light)] border border-[var(--border-default)]'
                         }`}
-                        disabled={!symptoms.trim()}
-                     >
-                        Analyze Symptoms <Brain size={20} className="ml-2" />
-                     </Button>
-                  </div>
-               </div>
-            </div>
-          </motion.div>
-        )}
-
-        {step === 'analyzing' && (
-          <motion.div
-            key="analyzing"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.1 }}
-            className="flex flex-col items-center justify-center py-20"
-          >
-            <div className="relative w-32 h-32 mb-8">
-               <div className="absolute inset-0 bg-blue-500/10 rounded-full animate-ping"></div>
-               <div className="absolute inset-0 border-[6px] border-blue-100 rounded-full"></div>
-               <div className="absolute inset-0 border-[6px] border-blue-600 rounded-full border-t-transparent animate-spin"></div>
-               <div className="absolute inset-0 flex items-center justify-center">
-                  <Brain className="text-blue-600" size={40} />
-               </div>
-            </div>
-            <h3 className="text-3xl font-bold text-slate-900 mb-3 tracking-tight">Analyzing Symptoms...</h3>
-            <p className="text-slate-500 text-lg animate-pulse">Checking against medical database</p>
-          </motion.div>
-        )}
-
-        {step === 'result' && (
-          <motion.div
-            key="result"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", bounce: 0.4 }}
-            className="space-y-6"
-          >
-            {/* Main Result Card */}
-            <div className={`relative bg-white rounded-[2.5rem] overflow-hidden shadow-xl border-2 ${
-                  result.severity === 'high' ? 'border-rose-100 shadow-rose-900/5' : 
-                  result.severity === 'medium' ? 'border-orange-100 shadow-orange-900/5' : 'border-teal-100 shadow-teal-900/5'
-            }`}>
-               {/* Banner */}
-               <div className={`p-8 ${
-                  result.severity === 'high' ? 'bg-rose-50' : 
-                  result.severity === 'medium' ? 'bg-orange-50' : 'bg-teal-50'
-               }`}>
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                     <div>
-                        <div className="flex items-center gap-2 mb-2">
-                           <Activity className={`w-5 h-5 ${
-                              result.severity === 'high' ? 'text-rose-600' : 
-                              result.severity === 'medium' ? 'text-orange-600' : 'text-teal-600'
-                           }`} />
-                           <span className={`text-xs font-bold uppercase tracking-wider ${
-                              result.severity === 'high' ? 'text-rose-600' : 
-                              result.severity === 'medium' ? 'text-orange-600' : 'text-teal-600'
-                           }`}>Analysis Report</span>
-                        </div>
-                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900">{result.condition}</h2>
-                     </div>
-                     <div className="flex items-center gap-4 bg-white/60 p-2 rounded-2xl backdrop-blur-sm border border-white/50">
-                        <div className="text-right">
-                           <p className="text-xs font-bold text-slate-400">AI Confidence</p>
-                           <p className="text-xl font-bold text-slate-900">{result.confidence}%</p>
-                        </div>
-                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold shadow-lg ${
-                           result.severity === 'high' ? 'bg-rose-500' : 
-                           result.severity === 'medium' ? 'bg-orange-500' : 'bg-teal-500'
-                        }`}>
-                           A+
-                        </div>
-                     </div>
-                  </div>
-               </div>
-
-               {/* Content */}
-               <div className="p-8 md:p-10 space-y-10">
-                  <div className="prose prose-lg text-slate-600 max-w-none">
-                     <p className="text-lg leading-relaxed">{result.desc}</p>
+                      >
+                        {isRecording ? <MicOff size={20} /> : <Mic size={20} />}
+                      </button>
+                    </div>
+                    
+                    {isRecording && (
+                      <p className="text-sm text-red-500 mt-3 font-semibold flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> 
+                        Listening...
+                      </p>
+                    )}
                   </div>
 
-                  {/* Action Box */}
+                  {/* Quick Select */}
                   <div>
-                     <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Recommended Next Step</h4>
-                     
-                     {result.action === 'consult_urgent' ? (
-                        <div className="bg-rose-50 rounded-3xl p-8 border border-rose-100 flex flex-col md:flex-row items-center gap-8">
-                           <div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
-                              <AlertCircle className="text-rose-600 w-8 h-8" />
-                           </div>
-                           <div className="flex-1 text-center md:text-left">
-                              <h5 className="text-xl font-bold text-rose-800 mb-2">Consult a Doctor Immediately</h5>
-                              <p className="text-rose-600/80 font-medium">Potential severity detected. Please speak with a specialist now.</p>
-                           </div>
-                           <Link href="/patient/consultations/book">
-                              <Button className="h-14 px-8 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold shadow-lg shadow-rose-600/20">
-                                 Book Urgent Call
-                              </Button>
-                           </Link>
-                        </div>
-                     ) : result.action === 'consult' ? (
-                        <div className="bg-orange-50 rounded-3xl p-8 border border-orange-100 flex flex-col md:flex-row items-center gap-8">
-                           <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
-                              <Stethoscope className="text-orange-600 w-8 h-8" />
-                           </div>
-                           <div className="flex-1 text-center md:text-left">
-                              <h5 className="text-xl font-bold text-orange-800 mb-2">Schedule a Consultation</h5>
-                              <p className="text-orange-600/80 font-medium">A general physician consultation is recommended to confirm.</p>
-                           </div>
-                           <Link href="/patient/consultations/book">
-                              <Button className="h-14 px-8 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold shadow-lg shadow-orange-600/20">
-                                 Book Appointment
-                              </Button>
-                           </Link>
-                        </div>
-                     ) : (
-                        <div className="bg-teal-50 rounded-3xl p-8 border border-teal-100 flex flex-col md:flex-row items-center gap-8">
-                           <div className="w-16 h-16 rounded-full bg-teal-100 flex items-center justify-center shrink-0">
-                              <CheckCircle className="text-teal-600 w-8 h-8" />
-                           </div>
-                           <div className="flex-1 text-center md:text-left">
-                              <h5 className="text-xl font-bold text-teal-800 mb-2">Home Care & Rest</h5>
-                              <p className="text-teal-600/80 font-medium">Symptoms appear mild. Monitor for 24 hours.</p>
-                           </div>
-                           <Button variant="outline" className="h-14 px-8 rounded-xl border-2 border-teal-200 text-teal-700 font-bold hover:bg-teal-100">
-                              View Home Remedies
-                           </Button>
-                        </div>
-                     )}
+                    <p className="text-sm font-bold text-[var(--text-tertiary)] uppercase tracking-wide mb-4">
+                      Quick Select
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {['Fever and cough', 'Stomach pain', 'Dizziness', 'Skin rash', 'Migraine', 'Joint Pain'].map((tag) => (
+                        <button
+                          key={tag}
+                          onClick={() => setSymptoms(tag)}
+                          className="px-4 py-2 bg-white border border-[var(--border-default)] rounded-full text-sm text-[var(--text-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] hover:bg-[var(--primary-light)] transition-all font-medium"
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-               </div>
-            </div>
 
-            <div className="flex justify-center pt-4">
-               <button 
+                  {/* Action Button */}
+                  <div className="flex justify-end pt-4">
+                    <Button 
+                      onClick={handleAnalyze} 
+                      className={`h-14 px-8 rounded-xl text-base font-bold transition-all flex items-center gap-2 ${
+                        !symptoms.trim() 
+                          ? 'bg-[var(--gray-200)] text-[var(--text-tertiary)] cursor-not-allowed' 
+                          : 'bg-[var(--text-primary)] text-white hover:bg-[var(--gray-800)] hover:shadow-xl shadow-lg'
+                      }`}
+                      disabled={!symptoms.trim()}
+                    >
+                      Analyze Symptoms 
+                      <Brain size={20} />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 'analyzing' && (
+            <motion.div
+              key="analyzing"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              className="flex flex-col items-center justify-center py-20"
+            >
+              <div className="relative w-32 h-32 mb-8">
+                <div className="absolute inset-0 bg-purple-500/10 rounded-full animate-ping"></div>
+                <div className="absolute inset-0 border-4 border-purple-100 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-purple-600 rounded-full border-t-transparent animate-spin"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Brain className="text-purple-600" size={40} />
+                </div>
+              </div>
+              <h3 className="text-3xl font-bold text-[var(--text-primary)] mb-3">Analyzing Symptoms...</h3>
+              <p className="text-[var(--text-secondary)] text-lg animate-pulse">Checking against medical database</p>
+            </motion.div>
+          )}
+
+          {step === 'result' && (
+            <motion.div
+              key="result"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ type: "spring", bounce: 0.3 }}
+              className="space-y-6"
+            >
+              {/* Result Card */}
+              <div className={`bg-white rounded-3xl overflow-hidden shadow-xl border-2 ${
+                result.severity === 'high' ? 'border-red-100' : 
+                result.severity === 'medium' ? 'border-orange-100' : 'border-teal-100'
+              }`}>
+                {/* Header */}
+                <div className={`p-8 ${
+                  result.severity === 'high' ? 'bg-red-50' : 
+                  result.severity === 'medium' ? 'bg-orange-50' : 'bg-teal-50'
+                }`}>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-3">
+                        <Activity className={`w-5 h-5 ${
+                          result.severity === 'high' ? 'text-red-600' : 
+                          result.severity === 'medium' ? 'text-orange-600' : 'text-teal-600'
+                        }`} />
+                        <span className={`text-xs font-bold uppercase tracking-wider ${
+                          result.severity === 'high' ? 'text-red-600' : 
+                          result.severity === 'medium' ? 'text-orange-600' : 'text-teal-600'
+                        }`}>Analysis Complete</span>
+                      </div>
+                      <h2 className="text-3xl md:text-4xl font-bold text-[var(--text-primary)]">
+                        {result.condition}
+                      </h2>
+                    </div>
+                    
+                    {/* Confidence Badge */}
+                    <div className="flex items-center gap-4 bg-white/80 backdrop-blur-sm p-4 rounded-2xl border border-white/50 shadow-sm">
+                      <div className="text-right">
+                        <p className="text-xs font-bold text-[var(--text-tertiary)] mb-1">AI Confidence</p>
+                        <p className="text-2xl font-bold text-[var(--text-primary)]">{result.confidence}%</p>
+                      </div>
+                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg ${
+                        result.severity === 'high' ? 'bg-red-500' : 
+                        result.severity === 'medium' ? 'bg-orange-500' : 'bg-teal-500'
+                      }`}>
+                        A+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-8 md:p-10 space-y-8">
+                  <p className="text-lg leading-relaxed text-[var(--text-secondary)]">
+                    {result.desc}
+                  </p>
+
+                  {/* Recommended Action */}
+                  <div>
+                    <h4 className="text-sm font-bold text-[var(--text-tertiary)] uppercase tracking-wide mb-4">
+                      Recommended Next Step
+                    </h4>
+                    
+                    {result.action === 'consult_urgent' ? (
+                      <div className="bg-red-50 rounded-2xl p-6 border border-red-100 flex flex-col md:flex-row items-center gap-6">
+                        <div className="w-14 h-14 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+                          <AlertCircle className="text-red-600 w-7 h-7" />
+                        </div>
+                        <div className="flex-1 text-center md:text-left">
+                          <h5 className="text-lg font-bold text-red-800 mb-2">Consult a Doctor Immediately</h5>
+                          <p className="text-red-600/80 font-medium text-sm">Potential severity detected. Please speak with a specialist now.</p>
+                        </div>
+                        <Link href="/patient/consultations/book">
+                          <Button className="h-12 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold shadow-lg">
+                            Book Urgent Call
+                          </Button>
+                        </Link>
+                      </div>
+                    ) : result.action === 'consult' ? (
+                      <div className="bg-orange-50 rounded-2xl p-6 border border-orange-100 flex flex-col md:flex-row items-center gap-6">
+                        <div className="w-14 h-14 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+                          <Stethoscope className="text-orange-600 w-7 h-7" />
+                        </div>
+                        <div className="flex-1 text-center md:text-left">
+                          <h5 className="text-lg font-bold text-orange-800 mb-2">Schedule a Consultation</h5>
+                          <p className="text-orange-600/80 font-medium text-sm">A general physician consultation is recommended to confirm.</p>
+                        </div>
+                        <Link href="/patient/consultations/book">
+                          <Button className="h-12 px-6 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-bold shadow-lg">
+                            Book Appointment
+                          </Button>
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="bg-teal-50 rounded-2xl p-6 border border-teal-100 flex flex-col md:flex-row items-center gap-6">
+                        <div className="w-14 h-14 rounded-xl bg-teal-100 flex items-center justify-center shrink-0">
+                          <CheckCircle className="text-teal-600 w-7 h-7" />
+                        </div>
+                        <div className="flex-1 text-center md:text-left">
+                          <h5 className="text-lg font-bold text-teal-800 mb-2">Home Care & Rest</h5>
+                          <p className="text-teal-600/80 font-medium text-sm">Symptoms appear mild. Monitor for 24 hours.</p>
+                        </div>
+                        <Button variant="outline" className="h-12 px-6 rounded-xl border-2 border-teal-200 text-teal-700 font-bold hover:bg-teal-50">
+                          View Home Remedies
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Reset Button */}
+              <div className="flex justify-center pt-4">
+                <button 
                   onClick={reset}
-                  className="group flex items-center gap-2 px-6 py-3 rounded-full text-slate-500 font-bold hover:bg-slate-100 transition-all"
-               >
+                  className="group flex items-center gap-2 px-6 py-3 rounded-xl text-[var(--text-secondary)] font-semibold hover:bg-white hover:shadow-md transition-all border border-transparent hover:border-[var(--border-default)]"
+                >
                   <RefreshCcw size={18} className="group-hover:-rotate-180 transition-transform duration-500" />
                   Check Another Symptom
-               </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }

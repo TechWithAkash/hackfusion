@@ -5,3 +5,5 @@ export { Input, TextArea } from './Input';
 export { Badge, SeverityBadge } from './Badge';
 export { Modal, ModalFooter } from './Modal';
 export { Spinner, Loading } from './Spinner';
+export { Separator } from './Separator';
+

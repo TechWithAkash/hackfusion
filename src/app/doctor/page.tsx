@@ -4,7 +4,8 @@ import React from 'react';
 import Link from 'next/link';
 import { 
   Users, Clock, DollarSign, Star, Video, 
-  MoreVertical, FileText, AlertCircle, Phone, Settings 
+  MoreVertical, FileText, AlertCircle, Phone, Settings,
+  TrendingUp, Calendar, Activity
 } from 'lucide-react';
 import { Button, Card, CardContent, CardHeader, CardTitle, Badge, SeverityBadge } from '@/components/ui';
 
@@ -26,127 +27,185 @@ const patientQueue = rawQueue.sort((a, b) =>
 export default function DoctorDashboard() {
   return (
     <div className="space-y-8">
-      {/* Header & Stats */}
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div>
-           <h1 className="text-2xl font-bold text-[var(--gray-900)]">Welcome back, Dr. Sarah</h1>
-           <p className="text-[var(--gray-600)]">You have <span className="font-bold text-[var(--primary)]">{patientQueue.length} patients</span> waiting in triage.</p>
-        </div>
-        <div className="flex items-center gap-3">
-           <span className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-             <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> Online
-           </span>
+      {/* Background */}
+      <div className="fixed inset-0 -z-10 gradient-mesh opacity-40"></div>
+
+      {/* Header */}
+      <div className="bg-white rounded-3xl p-8 shadow-sm border border-[var(--border-default)]">
+        <div className="flex flex-col sm:flex-row justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)] mb-2">Welcome back, Dr. Sarah</h1>
+            <p className="text-[var(--text-secondary)] font-medium">
+              You have <span className="font-bold text-[var(--primary)]">{patientQueue.length} patients</span> waiting in triage.
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-xl text-sm font-semibold border border-green-100">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" /> Online
+            </span>
+          </div>
         </div>
       </div>
 
+      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {[
-          { label: 'Consultations Today', value: '12', icon: Video, color: 'text-blue-600', bg: 'bg-blue-50' },
-          { label: 'Patients Served', value: '1,240', icon: Users, color: 'text-purple-600', bg: 'bg-purple-50' },
-          { label: 'Avg Rating', value: '4.9', icon: Star, color: 'text-yellow-600', bg: 'bg-yellow-50' },
-          { label: 'Earnings', value: '₹4,500', icon: DollarSign, color: 'text-green-600', bg: 'bg-green-50' },
+          { label: 'Consultations Today', value: '12', icon: Video, color: '#3B82F6', bg: '#EFF6FF', trend: '+3' },
+          { label: 'Patients Served', value: '1,240', icon: Users, color: '#A855F7', bg: '#FAF5FF', trend: '+24' },
+          { label: 'Avg Rating', value: '4.9', icon: Star, color: '#F59E0B', bg: '#FFFBEB', trend: '+0.1' },
+          { label: 'Earnings', value: '₹4,500', icon: DollarSign, color: '#10B981', bg: '#F0FDF4', trend: '+₹850' },
         ].map((stat, i) => (
-          <Card key={i}>
-            <CardContent className="p-4 flex items-center justify-between">
-               <div>
-                  <p className="text-sm text-[var(--gray-500)] mb-1">{stat.label}</p>
-                  <h3 className="text-2xl font-bold text-[var(--gray-900)]">{stat.value}</h3>
-               </div>
-               <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
-                  <stat.icon size={20} />
-               </div>
-            </CardContent>
-          </Card>
+          <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--border-default)] hover:shadow-md hover:-translate-y-0.5 transition-all duration-300">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 rounded-xl" style={{ backgroundColor: stat.bg }}>
+                <stat.icon size={20} style={{ color: stat.color }} />
+              </div>
+              <div className="text-xs font-semibold text-green-600 flex items-center gap-1">
+                <TrendingUp size={12} />
+                {stat.trend}
+              </div>
+            </div>
+            <div>
+              <p className="text-sm text-[var(--text-tertiary)] font-medium mb-1">{stat.label}</p>
+              <h3 className="text-3xl font-bold text-[var(--text-primary)]">{stat.value}</h3>
+            </div>
+          </div>
         ))}
       </div>
 
       {/* Main Content: Triage Queue */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-           <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-[var(--gray-900)] flex items-center gap-2">
-                 <Users size={20} className="text-[var(--primary)]"/> Patient Queue
-              </h2>
-              <Badge variant="info">AI Triaged</Badge>
-           </div>
-           
-           <div className="space-y-3">
-              {patientQueue.map((patient) => (
-                <Card key={patient.id} hover className="group border-l-4 border-l-transparent data-[severity=critical]:border-l-red-500 data-[severity=high]:border-l-red-500 data-[severity=medium]:border-l-orange-500" data-severity={patient.severity}>
-                   <CardContent className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                      {/* Left: Patient Info */}
-                      <div className="flex items-start gap-4">
-                         <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-500">
-                           {patient.name.charAt(0)}
-                         </div>
-                         <div>
-                            <h4 className="font-bold text-[var(--gray-900)]">{patient.name} <span className="text-sm font-normal text-gray-500">({patient.age}y)</span></h4>
-                            <div className="flex items-center gap-2 text-sm text-[var(--gray-500)] mt-1">
-                               <span className="flex items-center gap-1"><Clock size={12}/> Wait: {patient.waitTime}</span>
-                               <span>•</span>
-                               <span>{patient.village}</span>
-                            </div>
-                         </div>
-                      </div>
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-bold text-[var(--text-primary)] flex items-center gap-2">
+              <Users size={20} className="text-[var(--primary)]"/> Patient Queue
+            </h2>
+            <Badge variant="info">AI Triaged</Badge>
+          </div>
+          
+          <div className="space-y-3">
+            {patientQueue.map((patient) => {
+              const severityColors = {
+                critical: { border: '#EF4444', bg: '#FEF2F2', text: '#991B1B' },
+                high: { border: '#F97316', bg: '#FFF7ED', text: '#9A3412' },
+                medium: { border: '#F59E0B', bg: '#FFFBEB', text: '#92400E' },
+                low: { border: '#10B981', bg: '#F0FDF4', text: '#065F46' }
+              };
+              const colors = severityColors[patient.severity as keyof typeof severityColors];
 
-                      {/* Middle: AI Insights */}
-                      <div className="flex-1 sm:px-4">
-                         <div className="bg-gray-50 p-2 rounded-lg border border-gray-100">
-                            <p className="text-xs text-gray-400 font-medium uppercase mb-1">AI Detected Symptom</p>
-                            <p className="text-sm font-medium text-gray-800">{patient.symptom}</p>
-                         </div>
+              return (
+                <div 
+                  key={patient.id} 
+                  className="bg-white rounded-2xl p-6 shadow-sm border border-[var(--border-default)] hover:shadow-md transition-all duration-300 group"
+                  style={{ borderLeft: `4px solid ${colors.border}` }}
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    {/* Left: Patient Info */}
+                    <div className="flex items-start gap-4 flex-1">
+                      <div className="w-12 h-12 rounded-xl bg-[var(--gray-100)] flex items-center justify-center font-bold text-[var(--text-secondary)] text-lg shrink-0">
+                        {patient.name.charAt(0)}
                       </div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-[var(--text-primary)] mb-1">
+                          {patient.name} <span className="text-sm font-normal text-[var(--text-tertiary)]">({patient.age}y)</span>
+                        </h4>
+                        <div className="flex items-center gap-2 text-sm text-[var(--text-tertiary)] mb-3">
+                          <span className="flex items-center gap-1">
+                            <Clock size={12}/> Wait: {patient.waitTime}
+                          </span>
+                          <span>•</span>
+                          <span>{patient.village}</span>
+                        </div>
+                        
+                        {/* AI Insights */}
+                        <div className="rounded-xl p-3 border" style={{ backgroundColor: colors.bg, borderColor: colors.border + '40' }}>
+                          <p className="text-xs font-semibold uppercase mb-1" style={{ color: colors.text }}>
+                            AI Detected Symptom
+                          </p>
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">{patient.symptom}</p>
+                        </div>
+                      </div>
+                    </div>
 
-                      {/* Right: Actions */}
-                      <div className="flex items-center gap-3">
-                         <SeverityBadge severity={patient.severity as any} />
-                         <Link href={`/doctor/consultation/${patient.id}`}>
-                            <Button size="sm" className="gap-2">
-                               <Video size={16} /> Start
-                            </Button>
-                         </Link>
-                      </div>
-                   </CardContent>
-                </Card>
-              ))}
-           </div>
+                    {/* Right: Actions */}
+                    <div className="flex items-center gap-3 sm:flex-col sm:items-end">
+                      <SeverityBadge severity={patient.severity as any} />
+                      <Link href={`/doctor/consultation/${patient.id}`}>
+                        <Button size="sm" className="gap-2 h-10 px-5 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white font-semibold shadow-md transition-all">
+                          <Video size={16} /> Start
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Right Sidebar: Quick Schedule */}
+        {/* Right Sidebar: Schedule */}
         <div className="space-y-6">
-           <h2 className="text-lg font-bold text-[var(--gray-900)]">Schedule</h2>
-           <Card>
-              <CardContent className="p-0">
-                 <div className="p-4 border-b border-[var(--border-color)]">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="font-medium text-gray-900">Today, 8 Feb</span>
-                      <Settings size={16} className="text-gray-400 cursor-pointer" />
-                    </div>
-                    {['09:00 AM', '09:30 AM', '10:00 AM'].map((time) => (
-                       <div key={time} className="flex items-center gap-3 py-2 text-sm text-gray-500">
-                          <div className="w-2 h-2 bg-green-400 rounded-full"/>
-                          <span className="line-through">{time}</span>
-                          <span className="ml-auto text-xs bg-gray-100 px-2 py-0.5 rounded">Completed</span>
-                       </div>
-                    ))}
-                    <div className="flex items-center gap-3 py-2 text-sm font-medium text-blue-600">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"/>
-                        <span>10:30 AM</span>
-                        <span className="ml-auto text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded">Current</span>
-                    </div>
-                    {['11:00 AM', '11:30 AM'].map((time) => (
-                       <div key={time} className="flex items-center gap-3 py-2 text-sm text-gray-600">
-                          <div className="w-2 h-2 bg-gray-300 rounded-full"/>
-                          <span>{time}</span>
-                          <span className="ml-auto text-xs bg-gray-100 px-2 py-0.5 rounded">Open</span>
-                       </div>
-                    ))}
-                 </div>
-                 <div className="p-4 bg-gray-50 text-center">
-                    <Button variant="outline" size="sm" className="w-full">Manage Availability</Button>
-                 </div>
-              </CardContent>
-           </Card>
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">Today's Schedule</h2>
+          <div className="bg-white rounded-2xl shadow-sm border border-[var(--border-default)] overflow-hidden">
+            <div className="p-6 border-b border-[var(--border-light)]">
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-semibold text-[var(--text-primary)]">Today, 8 Feb</span>
+                <Settings size={16} className="text-[var(--text-tertiary)] cursor-pointer hover:text-[var(--text-primary)] transition-colors" />
+              </div>
+              
+              <div className="space-y-3">
+                {['09:00 AM', '09:30 AM', '10:00 AM'].map((time) => (
+                  <div key={time} className="flex items-center gap-3 py-2 text-sm text-[var(--text-tertiary)]">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"/>
+                    <span className="line-through flex-1">{time}</span>
+                    <span className="text-xs bg-[var(--gray-100)] px-2 py-0.5 rounded-lg font-medium">Completed</span>
+                  </div>
+                ))}
+                
+                <div className="flex items-center gap-3 py-2 text-sm font-semibold text-[var(--primary)]">
+                  <div className="w-2 h-2 bg-[var(--primary)] rounded-full animate-pulse"/>
+                  <span className="flex-1">10:30 AM</span>
+                  <span className="text-xs bg-blue-50 text-[var(--primary)] px-2 py-0.5 rounded-lg">Current</span>
+                </div>
+                
+                {['11:00 AM', '11:30 AM', '12:00 PM'].map((time) => (
+                  <div key={time} className="flex items-center gap-3 py-2 text-sm text-[var(--text-secondary)]">
+                    <div className="w-2 h-2 bg-[var(--gray-300)] rounded-full"/>
+                    <span className="flex-1">{time}</span>
+                    <span className="text-xs bg-[var(--gray-100)] px-2 py-0.5 rounded-lg font-medium">Open</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="p-4 bg-[var(--gray-50)]">
+              <Button variant="outline" size="sm" className="w-full rounded-xl font-semibold">
+                Manage Availability
+              </Button>
+            </div>
+          </div>
+
+          {/* Quick Stats */}
+          <div className="bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] text-white rounded-2xl p-6 shadow-lg">
+            <div className="flex items-center gap-2 mb-4">
+              <Activity size={20} />
+              <h3 className="font-bold text-lg">This Week</h3>
+            </div>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-blue-100 text-sm">Total Consultations</span>
+                <span className="text-2xl font-bold">48</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-blue-100 text-sm">Avg Duration</span>
+                <span className="text-2xl font-bold">12m</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-blue-100 text-sm">Patient Satisfaction</span>
+                <span className="text-2xl font-bold">98%</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

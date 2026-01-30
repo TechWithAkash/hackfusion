@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
-const API_KEY = 'AIzaSyAhqpQk67cx_PTrUx4SX_fuSyALxl5S4-g'; // In production, move to .env
+const API_KEY = process.env.GOOGLE_TRANSLATE_API_KEY || 'AIzaSyAhqpQk67cx_PTrUx4SX_fuSyALxl5S4-g';
+
 
 export async function POST(request: Request) {
   try {

@@ -1,14 +1,14 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getTranslation } from '@/lib/translations';
 
-type Language = 'en' | 'hi' | 'es' | 'kn' | 'ta'; // English, Hindi, Spanish, Kannada, Tamil
+type Language = 'en' | 'hi' | 'es' | 'kn' | 'ta' | 'fr' | 'de' | 'zh-CN' | 'te' | 'mr' | 'bn' | 'ml'; 
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (text: string) => string;
-  translateDynamic: (text: string) => Promise<string>;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -18,46 +18,80 @@ export const languages = [
   { code: 'hi', name: 'Hindi', native: 'हिन्दी' },
   { code: 'kn', name: 'Kannada', native: 'ಕನ್ನಡ' },
   { code: 'ta', name: 'Tamil', native: 'தமிழ்' },
+  { code: 'te', name: 'Telugu', native: 'తెలుగు' },
+  { code: 'ml', name: 'Malayalam', native: 'മലയാളം' },
+  { code: 'mr', name: 'Marathi', native: 'मराठी' },
+  { code: 'bn', name: 'Bengali', native: 'বাংলা' },
   { code: 'es', name: 'Spanish', native: 'Español' },
+  { code: 'fr', name: 'French', native: 'Français' },
+  { code: 'de', name: 'German', native: 'Deutsch' },
+  { code: 'zh-CN', name: 'Chinese', native: '中文' },
 ];
 
-export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('en');
-  const [cache, setCache] = useState<Record<string, string>>({});
+// Cache for API translations
+const translationCache: Record<string, Record<string, string>> = {};
 
-  // Real-time translation function
-  const translateDynamic = async (text: string): Promise<string> => {
+export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
+  const [language, setLanguageState] = useState<Language>('en');
+
+  // Load saved language from localStorage on mount
+  useEffect(() => {
+    const savedLang = localStorage.getItem('healthbridge-language');
+    if (savedLang && languages.some(l => l.code === savedLang)) {
+      setLanguageState(savedLang as Language);
+    }
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem('healthbridge-language', lang);
+  };
+
+  // Translation function - uses dictionary first, then falls back to API
+  const t = (text: string): string => {
     if (language === 'en') return text;
     
+    // First try the local dictionary
+    const dictionaryTranslation = getTranslation(text, language);
+    if (dictionaryTranslation !== text) {
+      return dictionaryTranslation;
+    }
+    
+    // If not in dictionary, check cache
     const cacheKey = `${language}:${text}`;
-    if (cache[cacheKey]) return cache[cacheKey];
+    if (translationCache[language]?.[text]) {
+      return translationCache[language][text];
+    }
+    
+    // For text not in dictionary or cache, use API in background
+    // Return original text immediately to avoid blocking UI
+    translateViaAPI(text, language);
+    return text;
+  };
 
+  // Async function to translate via API and update cache
+  const translateViaAPI = async (text: string, targetLang: Language) => {
     try {
-      const res = await fetch('/api/translate', {
+      const response = await fetch('/api/translate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, targetLang: language }),
+        body: JSON.stringify({ text, targetLang }),
       });
-      const data = await res.json();
       
-      const translated = data.translatedText || text;
-      setCache(prev => ({ ...prev, [cacheKey]: translated }));
-      return translated;
-    } catch (err) {
-      console.error(err);
-      return text;
+      const data = await response.json();
+      if (data.translatedText) {
+        if (!translationCache[targetLang]) {
+          translationCache[targetLang] = {};
+        }
+        translationCache[targetLang][text] = data.translatedText;
+      }
+    } catch (error) {
+      console.error('Translation API error:', error);
     }
   };
 
-  // Synchronous fallback (placeholder until async loads)
-  const t = (text: string) => {
-    // For specific static strings, we could implement a dictionary here
-    // For now, we return English and rely on components to call translateDynamic for heavy lifting
-    return text; 
-  };
-
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, translateDynamic }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   );
@@ -69,22 +103,8 @@ export const useLanguage = () => {
   return context;
 };
 
-// --- CUSTOM HOOK FOR COMPONENT TRANSLATION ---
-export const useTranslate = (text: string) => {
-  const { language, translateDynamic } = useLanguage();
-  const [translated, setTranslated] = useState(text);
-
-  useEffect(() => {
-    let isMounted = true;
-    if (language === 'en') {
-      setTranslated(text);
-    } else {
-      translateDynamic(text).then(res => {
-        if (isMounted) setTranslated(res);
-      });
-    }
-    return () => { isMounted = false; };
-  }, [text, language]);
-
-  return translated;
+// Hook for translating text
+export const useTranslate = () => {
+  const { t } = useLanguage();
+  return t;
 };

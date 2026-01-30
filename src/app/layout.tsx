@@ -19,8 +19,10 @@ export const metadata: Metadata = {
 };
 
 import { LanguageProvider } from "@/context/LanguageContext";
+import { GoogleTranslate } from "@/components/shared/GoogleTranslate";
 
 export default function RootLayout({
+
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -31,8 +33,10 @@ export default function RootLayout({
         className={`${poppins.variable} ${jetbrainsMono.variable} antialiased bg-[var(--background)] text-[var(--foreground)]`}
       >
         <LanguageProvider>
+          <GoogleTranslate />
           {children}
         </LanguageProvider>
+
       </body>
     </html>
   );

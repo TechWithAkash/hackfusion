@@ -29,19 +29,19 @@ export default function PatientLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--background)]">
+    <div className="min-h-screen bg-[#F8FAFC]">
       {/* Desktop Sidebar */}
       <PatientSidebar />
 
       {/* Mobile Header */}
-      <div className="lg:hidden sticky top-0 z-40 bg-white border-b border-[var(--border-color)] px-4 h-16 flex items-center justify-between">
+      <div className="lg:hidden sticky top-0 z-40 bg-white border-b border-[var(--border-default)] px-4 h-16 flex items-center justify-between shadow-sm">
         <Link href="/" className="flex items-center gap-2">
-          <div className="bg-[var(--primary)] text-white p-1 rounded-md">
-            <Activity size={20} />
+          <div className="bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] text-white p-1.5 rounded-lg">
+            <Activity size={18} />
           </div>
-          <span className="font-bold text-lg">HealthBridge</span>
+          <span className="font-bold text-base">HealthBridge</span>
         </Link>
-        <button onClick={toggleMenu} className="p-2 text-[var(--gray-600)]">
+        <button onClick={toggleMenu} className="p-2 text-[var(--text-secondary)] hover:bg-[var(--gray-50)] rounded-lg transition-colors">
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -57,10 +57,10 @@ export default function PatientLayout({
                 <Link key={item.href} href={item.href} onClick={closeMenu}>
                   <div
                     className={`
-                      flex items-center gap-3 px-3 py-3 rounded-lg transition-colors
+                      flex items-center gap-3 px-4 py-3 rounded-xl transition-colors font-medium
                       ${active 
-                        ? 'bg-[var(--primary-light)] text-[var(--primary-dark)] font-medium' 
-                        : 'text-[var(--gray-600)] hover:bg-[var(--gray-50)]'
+                        ? 'bg-[var(--primary)] text-white shadow-md' 
+                        : 'text-[var(--text-secondary)] hover:bg-[var(--gray-50)]'
                       }
                     `}
                   >
@@ -70,9 +70,9 @@ export default function PatientLayout({
                 </Link>
               );
             })}
-            <div className="border-t border-[var(--border-color)] my-4 pt-4">
-               <Link href="/" onClick={closeMenu}>
-                <div className="flex items-center gap-3 px-3 py-3 text-red-600 hover:bg-red-50 rounded-lg">
+            <div className="border-t border-[var(--border-default)] my-4 pt-4">
+              <Link href="/" onClick={closeMenu}>
+                <div className="flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl font-medium">
                   <LogOut size={20} />
                   <span>Sign Out</span>
                 </div>
@@ -83,7 +83,7 @@ export default function PatientLayout({
       )}
 
       {/* Main Content Area */}
-      <div className="lg:ml-64 p-4 sm:p-6 lg:p-8">
+      <div className="lg:ml-64 min-h-screen">
         {children}
       </div>
     </div>

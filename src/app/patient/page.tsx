@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { 
   Calendar, Clock, Video, ChevronRight, Activity, 
   Thermometer, Heart, Droplets, Plus, Sun, FileText, 
-  Stethoscope, Pill 
+  Stethoscope, Pill, TrendingUp, Zap, ArrowUpRight,
+  Sparkles, Bell, Settings
 } from 'lucide-react';
 import { Button } from '@/components/ui';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, LineChart, Line } from 'recharts';
+import { useTranslate } from '@/context/LanguageContext';
 
-// Enhanced Mock Data for Multi-Metric Graph
+// Health Data
 const healthData = [
   { date: 'Mon', bp: 118, heartRate: 72, activity: 40 },
   { date: 'Tue', bp: 120, heartRate: 75, activity: 65 },
@@ -22,218 +24,291 @@ const healthData = [
 ];
 
 export default function PatientDashboard() {
+  const t = useTranslate();
+  
   return (
-    <div className="space-y-8 max-w-7xl mx-auto font-sans relative">
-      
-       {/* Background Mesh (Matches Landing Page) */}
-       <div className="absolute inset-x-[-50vw] inset-y-[-50vh] -z-10 bg-slate-50 overflow-hidden pointer-events-none">
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
-          <div className="absolute top-[20%] right-[20%] w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-[100px]"></div>
-          <div className="absolute bottom-[10%] left-[10%] w-[500px] h-[500px] bg-teal-100/40 rounded-full blur-[100px]"></div>
-       </div>
-
-      {/* Header Banner - Glassmorphism style */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-700 to-indigo-700 rounded-[2rem] p-8 md:p-10 shadow-xl shadow-blue-500/20 text-white">
-        <div className="absolute top-0 right-0 p-40 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 p-32 bg-teal-400/20 rounded-full blur-3xl -ml-12 -mb-12 pointer-events-none"></div>
-        
-        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-          <div className="flex items-center gap-6">
-             <div className="bg-white/20 backdrop-blur-md p-4 rounded-2xl shadow-inner border border-white/10 hidden sm:block">
-               <Sun size={32} className="text-amber-300 drop-shadow-md" />
-             </div>
-             <div>
-               <h1 className="text-3xl md:text-4xl font-bold tracking-tight mb-2">Namaste, Rahul! 🙏</h1>
-               <p className="text-blue-100 font-medium text-lg opacity-90">Your vitals are looking stable. Keep up the good work!</p>
-             </div>
-          </div>
+    <div className="p-6 space-y-6 max-w-[1400px] mx-auto">
+      {/* Top Bar - Minimal & Clean */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-1">
+            {t('Namaste')}, Rahul! 👋
+          </h1>
+          <p className="text-[var(--text-secondary)] font-medium">
+            {t('Your vitals are looking stable. Keep up the good work!')}
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button className="w-11 h-11 rounded-xl bg-white border border-[var(--border-default)] flex items-center justify-center hover:bg-[var(--gray-50)] transition-colors relative">
+            <Bell size={20} className="text-[var(--text-secondary)]" />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+          <button className="w-11 h-11 rounded-xl bg-white border border-[var(--border-default)] flex items-center justify-center hover:bg-[var(--gray-50)] transition-colors">
+            <Settings size={20} className="text-[var(--text-secondary)]" />
+          </button>
           <Link href="/patient/symptom-checker">
-            <Button className="h-14 px-8 rounded-xl bg-white text-blue-700 font-bold shadow-lg hover:bg-blue-50 hover:scale-105 transition-all flex items-center gap-2">
-              <Plus size={20} />
+            <Button className="h-11 px-6 rounded-xl bg-[var(--text-primary)] text-white hover:bg-[var(--gray-800)] shadow-md hover:shadow-lg transition-all flex items-center gap-2 font-semibold">
+              <Plus size={18} />
               Check Symptoms
             </Button>
           </Link>
         </div>
       </div>
 
-      {/* Vitals Grid - Bento Style */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="text-xl font-bold text-slate-900">Health Overview</h2>
-          <span className="text-sm font-semibold text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-sm">Updated: Just now</span>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {[
-            { label: 'Heart Rate', value: '72', unit: 'bpm', icon: Heart, color: 'text-rose-500', bg: 'bg-rose-50', border: 'border-rose-100' },
-            { label: 'Blood Pressure', value: '120/80', unit: 'mmHg', icon: Activity, color: 'text-blue-500', bg: 'bg-blue-50', border: 'border-blue-100' },
-            { label: 'Temperature', value: '98.6', unit: '°F', icon: Thermometer, color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-100' },
-            { label: 'Oxygen Level', value: '98', unit: '%', icon: Droplets, color: 'text-teal-500', bg: 'bg-teal-50', border: 'border-teal-100' }
-          ].map((stat, i) => (
-            <div key={i} className={`bg-white rounded-[1.5rem] p-6 shadow-sm border ${stat.border} hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group`}>
-              <div className="flex items-start justify-between mb-4">
-                <div className={`p-3.5 rounded-2xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
-                  <stat.icon size={24} />
-                </div>
-                {i === 0 && <span className="flex h-3 w-3 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-rose-500"></span>
-                </span>}
-              </div>
-              <div>
-                 <p className="text-slate-500 text-sm font-semibold mb-1 tracking-wide">{stat.label}</p>
-                 <div className="flex items-baseline gap-1.5">
-                   <h3 className="text-3xl font-bold text-slate-900 tracking-tight">{stat.value}</h3>
-                   <span className="text-sm text-slate-400 font-bold">{stat.unit}</span>
-                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        {/* Main Column */}
-        <div className="xl:col-span-2 space-y-8">
-          
-          {/* Upcoming Appointment Card - Premium Layout */}
-          <section>
-            <h2 className="text-xl font-bold text-slate-900 mb-4 px-1">Upcoming Consultation</h2>
-            <div className="bg-white rounded-[2rem] p-1 shadow-md shadow-slate-200/50 border border-slate-100">
-               <div className="bg-gradient-to-br from-slate-50 to-white rounded-[1.8rem] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
-                  
-                  {/* Decorative background vibe */}
-                  <div className="absolute right-0 top-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-
-                  <div className="flex items-center gap-6 relative z-10 w-full md:w-auto">
-                     <div className="relative shrink-0">
-                        <div className="w-20 h-20 rounded-[1.2rem] bg-indigo-100 border-4 border-white shadow-xl overflow-hidden">
-                           <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=200" alt="Dr. Anjali" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full"></div>
-                     </div>
-                     <div>
-                        <h3 className="text-2xl font-bold text-slate-900">Dr. Anjali Gupta</h3>
-                        <p className="text-indigo-600 font-bold text-sm mb-2">Senior Cardiologist • MBBS, MD</p>
-                        <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-slate-500">
-                           <span className="bg-white px-3 py-1 rounded-full border border-slate-200 flex items-center gap-1.5 shadow-sm">
-                             <Calendar size={14} className="text-blue-500" /> Today, 8 Feb
-                           </span>
-                           <span className="bg-white px-3 py-1 rounded-full border border-slate-200 flex items-center gap-1.5 shadow-sm">
-                             <Clock size={14} className="text-orange-500" /> 04:30 PM
-                           </span>
-                        </div>
-                     </div>
-                  </div>
-                  
-                  <div className="flex flex-col gap-3 w-full md:w-auto relative z-10">
-                     <Link href="/patient/consultations/video-123" className="w-full">
-                        <Button className="w-full md:w-auto h-12 px-8 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                           <Video size={18} /> Join Video Call
-                        </Button>
-                     </Link>
-                     <p className="text-center text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 animate-pulse">
-                        Confirmed • On Time
-                     </p>
-                  </div>
-               </div>
-            </div>
-          </section>
-
-          {/* KPI Chart - Rich Visuals */}
-          <section>
-             <div className="flex items-center justify-between mb-4 px-1">
-                <h2 className="text-xl font-bold text-slate-900">Health Trends & Analysis</h2>
-                <div className="flex gap-2">
-                   <select className="text-sm font-semibold bg-white border border-slate-200 rounded-xl px-4 py-2 text-slate-600 outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer hover:border-blue-300 transition-colors shadow-sm">
-                      <option>Last 7 Days</option>
-                      <option>Last 30 Days</option>
-                   </select>
-                </div>
-             </div>
-             <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 h-[400px] relative">
-                {/* Subtle grid in background */}
-                <div className="absolute inset-x-6 inset-y-6 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:40px_40px] -z-10 rounded-xl"></div>
+      {/* Main Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - 2/3 width */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Vitals Cards - Compact Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: 'Heart Rate', value: '72', unit: 'bpm', icon: Heart, color: '#EF4444', bg: '#FEF2F2', status: 'Normal', trend: '+2' },
+              { label: 'Blood Pressure', value: '120/80', unit: 'mmHg', icon: Activity, color: '#3B82F6', bg: '#EFF6FF', status: 'Normal', trend: '0' },
+              { label: 'Temperature', value: '98.6', unit: '°F', icon: Thermometer, color: '#F59E0B', bg: '#FFFBEB', status: 'Normal', trend: '0' },
+              { label: 'Oxygen', value: '98', unit: '%', icon: Droplets, color: '#14B8A6', bg: '#F0FDFA', status: 'Normal', trend: '+1' }
+            ].map((stat, i) => (
+              <div key={i} className="bg-white rounded-2xl p-5 border border-[var(--border-default)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden">
+                {/* Subtle gradient background */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: `linear-gradient(135deg, ${stat.color}05 0%, transparent 100%)` }}></div>
                 
-                <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-6">Vitals vs Activity</h3>
-
-                <ResponsiveContainer width="100%" height="85%">
-                   <AreaChart data={healthData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                      <defs>
-                         <linearGradient id="colorBp" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
-                         </linearGradient>
-                         <linearGradient id="colorActivity" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10B981" stopOpacity={0.3}/>
-                            <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
-                         </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
-                      <XAxis dataKey="date" axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#64748B', fontWeight: 600}} dy={10} />
-                      <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12, fill: '#64748B'}} />
-                      <Tooltip 
-                         contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)', padding: '12px 16px' }}
-                         cursor={{ stroke: '#E2E8F0', strokeWidth: 2, strokeDasharray: '4 4' }}
-                         labelStyle={{ color: '#64748B', fontWeight: 600, marginBottom: '8px' }}
-                      />
-                      <Area type="monotone" dataKey="bp" name="Blood Pressure" stroke="#3B82F6" strokeWidth={4} fillOpacity={1} fill="url(#colorBp)" />
-                      <Area type="monotone" dataKey="activity" name="Activity Score" stroke="#10B981" strokeWidth={4} fillOpacity={1} fill="url(#colorActivity)" />
-                   </AreaChart>
-                </ResponsiveContainer>
-             </div>
-          </section>
-        </div>
-
-        {/* Right Sidebar Column */}
-        <div className="space-y-8">
-          
-          {/* Daily Tip - Vibrant Card */}
-          <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-teal-500 to-teal-700 text-white p-8 shadow-xl shadow-teal-500/20 group">
-             {/* Abstract Shapes */}
-             <div className="absolute top-0 right-0 p-32 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-white/20 transition-colors duration-500"></div>
-             
-             <div className="relative z-10">
-                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/20 mb-5">
-                   <Sun size={12} className="text-yellow-300" /> Daily Wellness
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="p-2.5 rounded-xl" style={{ backgroundColor: stat.bg }}>
+                      <stat.icon size={20} style={{ color: stat.color }} />
+                    </div>
+                    {i === 0 && (
+                      <span className="flex h-2 w-2 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-[var(--text-tertiary)] font-medium mb-1">{stat.label}</p>
+                  <div className="flex items-baseline gap-1 mb-2">
+                    <h3 className="text-2xl font-bold text-[var(--text-primary)]">{stat.value}</h3>
+                    <span className="text-xs text-[var(--text-tertiary)] font-semibold">{stat.unit}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: stat.bg, color: stat.color }}>
+                      {stat.status}
+                    </span>
+                  </div>
                 </div>
-                <h3 className="text-2xl font-bold mb-3">Ayurvedic Tip</h3>
-                <p className="text-teal-50 text-sm leading-relaxed mb-6 font-medium">
-                   "Drinking warm water with lemon & honey in the morning boosts digestion."
-                </p>
-                <button className="w-full py-3.5 bg-white text-teal-700 font-bold rounded-xl hover:bg-slate-50 transition-colors text-sm shadow-lg">
-                   Read More Tips
-                </button>
-             </div>
+              </div>
+            ))}
           </div>
 
-          {/* Recent Activity - Clean List */}
-          <div className="bg-white rounded-[2rem] shadow-sm border border-slate-100 overflow-hidden">
-             <div className="p-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
-                <h3 className="font-bold text-slate-900 text-lg">Recent Updates</h3>
-                <Link href="#" className="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 px-2 py-1 rounded-lg">View All</Link>
-             </div>
-             <div className="divide-y divide-slate-50">
-                {[
-                   { title: 'Viral Fever Check', subtitle: 'Self-diagnosis via AI', date: '2 days ago', icon: Stethoscope, bg: 'bg-rose-50', color: 'text-rose-600' },
-                   { title: 'Dr. Ravi Kumar', subtitle: 'Prescription for Paracetamol', date: '2 days ago', icon: Pill, bg: 'bg-blue-50', color: 'text-blue-600' },
-                   { title: 'Apollo Diagnostics', subtitle: 'Blood Test Report Ready', date: '5 days ago', icon: FileText, bg: 'bg-amber-50', color: 'text-amber-600' },
-                ].map((item, i) => (
-                   <div key={i} className="p-5 flex items-center gap-4 hover:bg-slate-50 transition-colors cursor-pointer group">
-                      <div className={`p-3.5 rounded-2xl ${item.bg} ${item.color} group-hover:scale-110 transition-transform shadow-sm`}>
-                         <item.icon size={20} />
-                      </div>
-                      <div className="flex-1">
-                         <p className="text-sm font-bold text-slate-800 group-hover:text-blue-700 transition-colors mb-0.5">{item.title}</p>
-                         <p className="text-xs text-slate-500 font-medium">{item.subtitle}</p>
-                      </div>
-                      <div className="text-right">
-                         <p className="text-[10px] font-bold text-slate-400 mb-1">{item.date}</p>
-                         <ChevronRight size={16} className="text-slate-300 ml-auto group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-                      </div>
-                   </div>
-                ))}
-             </div>
+          {/* Upcoming Consultation - Redesigned */}
+          <div className="bg-white rounded-3xl p-6 border border-[var(--border-default)] shadow-sm">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="text-lg font-bold text-[var(--text-primary)]">{t('Upcoming Consultation')}</h2>
+              <span className="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                {t('Confirmed')}
+              </span>
+            </div>
+            
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+              {/* Doctor Info */}
+              <div className="flex items-center gap-4 flex-1">
+                <div className="relative shrink-0">
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-md">
+                    <img 
+                      src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=200" 
+                      alt="Dr. Anjali" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></div>
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[var(--text-primary)] mb-0.5">Dr. Anjali Gupta</h3>
+                  <p className="text-sm text-[var(--primary)] font-semibold mb-2">Senior Cardiologist</p>
+                  <div className="flex items-center gap-3 text-xs font-medium text-[var(--text-tertiary)]">
+                    <span className="flex items-center gap-1.5">
+                      <Calendar size={12} className="text-[var(--primary)]" /> Today, 8 Feb
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <Clock size={12} className="text-orange-500" /> 04:30 PM
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Action */}
+              <Link href="/patient/consultations/video-123">
+                <Button className="h-11 px-6 rounded-xl bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white font-semibold shadow-md transition-all flex items-center gap-2">
+                  <Video size={18} /> {t('Join Call')}
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Health Trends Chart - Redesigned */}
+          <div className="bg-white rounded-3xl p-6 border border-[var(--border-default)] shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-lg font-bold text-[var(--text-primary)] mb-1">{t('Health Trends')}</h2>
+                <p className="text-sm text-[var(--text-tertiary)]">Last 7 days overview</p>
+              </div>
+              <select className="text-sm font-medium bg-[var(--gray-50)] border border-[var(--border-default)] rounded-xl px-4 py-2 text-[var(--text-secondary)] outline-none focus:ring-2 focus:ring-[var(--primary)]/20 cursor-pointer transition-colors">
+                <option>{t('Last 7 Days')}</option>
+                <option>Last 30 Days</option>
+                <option>Last 3 Months</option>
+              </select>
+            </div>
+            
+            <div className="h-[280px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={healthData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorBp" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorHeart" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#EF4444" stopOpacity={0.1}/>
+                      <stop offset="95%" stopColor="#EF4444" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F4F4F5" />
+                  <XAxis 
+                    dataKey="date" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fontSize: 12, fill: '#A1A1AA', fontWeight: 500}} 
+                    dy={10} 
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{fontSize: 12, fill: '#A1A1AA'}} 
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      borderRadius: '12px', 
+                      border: 'none', 
+                      boxShadow: '0 10px 25px -5px rgba(0,0,0,0.1)', 
+                      padding: '12px 16px',
+                      backgroundColor: 'white'
+                    }}
+                    cursor={{ stroke: '#E4E4E7', strokeWidth: 2 }}
+                    labelStyle={{ color: '#52525B', fontWeight: 600, marginBottom: '8px' }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="bp" 
+                    name="Blood Pressure" 
+                    stroke="#3B82F6" 
+                    strokeWidth={3} 
+                    dot={{ fill: '#3B82F6', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="heartRate" 
+                    name="Heart Rate" 
+                    stroke="#EF4444" 
+                    strokeWidth={3} 
+                    dot={{ fill: '#EF4444', r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            
+            {/* Legend */}
+            <div className="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-[var(--border-light)]">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[#3B82F6]"></div>
+                <span className="text-sm font-medium text-[var(--text-secondary)]">Blood Pressure</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[#EF4444]"></div>
+                <span className="text-sm font-medium text-[var(--text-secondary)]">Heart Rate</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Sidebar - 1/3 width */}
+        <div className="space-y-6">
+          {/* Daily Wellness Tip - Redesigned */}
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--secondary)] via-[var(--secondary)] to-[var(--secondary-dark)] text-white p-6 shadow-lg">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-2xl"></div>
+            
+            <div className="relative z-10">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-xs font-semibold border border-white/20 mb-4">
+                <Sparkles size={12} className="text-yellow-300" /> {t('Daily Wellness')}
+              </div>
+              <h3 className="text-xl font-bold mb-3">{t('Ayurvedic Tip')}</h3>
+              <p className="text-teal-50 text-sm leading-relaxed mb-5 font-medium">
+                "Drinking warm water with lemon & honey in the morning boosts digestion and immunity."
+              </p>
+              <button className="w-full py-2.5 bg-white text-[var(--secondary)] font-semibold rounded-xl hover:bg-gray-50 transition-colors text-sm shadow-md flex items-center justify-center gap-2">
+                {t('Read More Tips')}
+                <ArrowUpRight size={16} />
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-white rounded-3xl p-6 border border-[var(--border-default)] shadow-sm">
+            <h3 className="font-bold text-[var(--text-primary)] text-base mb-4">Quick Actions</h3>
+            <div className="space-y-2">
+              {[
+                { icon: Stethoscope, label: 'Book Appointment', color: '#3B82F6', bg: '#EFF6FF', href: '/patient/consultations' },
+                { icon: FileText, label: 'View Records', color: '#10B981', bg: '#F0FDF4', href: '/patient/records' },
+                { icon: Pill, label: 'Medications', color: '#F59E0B', bg: '#FFFBEB', href: '/patient/medications' },
+              ].map((action, i) => (
+                <Link key={i} href={action.href}>
+                  <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--gray-50)] transition-colors group">
+                    <div className="p-2 rounded-lg" style={{ backgroundColor: action.bg }}>
+                      <action.icon size={18} style={{ color: action.color }} />
+                    </div>
+                    <span className="flex-1 text-left text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary)] transition-colors">
+                      {action.label}
+                    </span>
+                    <ChevronRight size={16} className="text-[var(--gray-300)] group-hover:text-[var(--primary)] group-hover:translate-x-1 transition-all" />
+                  </button>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Recent Activity - Redesigned */}
+          <div className="bg-white rounded-3xl border border-[var(--border-default)] shadow-sm overflow-hidden">
+            <div className="p-6 pb-4 flex justify-between items-center">
+              <h3 className="font-bold text-[var(--text-primary)] text-base">Recent Activity</h3>
+              <Link href="#" className="text-xs font-semibold text-[var(--primary)] hover:text-[var(--primary-dark)] flex items-center gap-1">
+                View All <ArrowUpRight size={12} />
+              </Link>
+            </div>
+            <div className="divide-y divide-[var(--border-light)]">
+              {[
+                { title: 'Viral Fever Check', subtitle: 'AI Diagnosis', date: '2d ago', icon: Stethoscope, bg: '#FEF2F2', color: '#EF4444' },
+                { title: 'Prescription', subtitle: 'Dr. Ravi Kumar', date: '2d ago', icon: Pill, bg: '#EFF6FF', color: '#3B82F6' },
+                { title: 'Blood Test', subtitle: 'Report Ready', date: '5d ago', icon: FileText, bg: '#FFFBEB', color: '#F59E0B' },
+              ].map((item, i) => (
+                <div key={i} className="px-6 py-4 hover:bg-[var(--gray-50)] transition-colors cursor-pointer group">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl group-hover:scale-110 transition-transform" style={{ backgroundColor: item.bg }}>
+                      <item.icon size={16} style={{ color: item.color }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-[var(--text-primary)] group-hover:text-[var(--primary)] transition-colors truncate">
+                        {item.title}
+                      </p>
+                      <p className="text-xs text-[var(--text-tertiary)] font-medium">{item.subtitle}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-xs font-medium text-[var(--text-tertiary)]">{item.date}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

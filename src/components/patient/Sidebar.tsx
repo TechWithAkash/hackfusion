@@ -48,7 +48,7 @@ export const PatientSidebar = () => {
             JD
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-bold text-slate-800 truncate">John Doe</p>
+            <p className="text-sm font-bold text-slate-800 truncate">Rahul Sharma</p>
             <p className="text-xs text-slate-500 truncate">Standard Plan</p>
           </div>
           <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse" />
